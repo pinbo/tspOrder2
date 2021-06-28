@@ -1,7 +1,9 @@
 ## examples
-# library(ASMap)
+## concorde and LKH2 can both give optimal orders, so just need to run one of them.
+
 source("junli-genetic-map-functions.R")
-# for windows
+
+# for Windows
 concorde_path = "./bin/concorde.exe"
 LKHexec = "./bin/LKH2.exe"
 
@@ -34,7 +36,6 @@ newmap = map3
 
 # You can run multiple times of the loop
 # or change to more loops
-runmaps = list()
 for (n in 1:10){
   # m6 = tspOrder2(cross = m3, method="concorde", execPath=concorde_path)
   m6 = tspOrder2(cross = m3, method="lkh", execPath=LKHexec)
@@ -45,21 +46,7 @@ for (n in 1:10){
   newmap = better.order(newmap, map6)
 }
 
-rowdiffs = lapply(runmaps, function(x){
-  which(rownames(map3)!=rownames(x))
-})
-
-pairdif = c()
-for (i in 1:length(rowdiffs)){
-  for (j in 1:length(rowdiffs)){
-    pairdif = c(pairdif, length(intersect(rowdiffs[[i]],rowdiffs[[j]]))/length(union(rowdiffs[[i]],rowdiffs[[j]])))
-  }
-}
-
-matrix(pairdif,nrow=length(rowdiffs))
-
-length(unique(unlist(rowdiffs)))
-
+# replace maps of m3 with the adjusted maps
 markerlist = split(rownames(newmap), newmap$chr)
 
 m7 = reorder.marker(m3, markerlist)
