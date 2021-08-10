@@ -1,5 +1,54 @@
 library(qtl)
 
+#' use concorde or LKH2 to order markers with a recombination fraction matrix input
+tspOrder2.rf <- function(rf, method="concorde", execPath)
+{
+  tmpdir = "tsptemp"
+  if(!dir.exists(tmpdir)) dir.create(tmpdir)
+  # neworder = lapply(chr, function(x){
+    cat("Processing \n")
+    filestem = paste0("./", tmpdir, "/temp_file")
+    
+    # pull rfmatrix from the cross
+    rf0 = rf
+    mn = rownames(rf0) # marker names
+    nmarker = nrow(rf0)
+    
+    # Create the TSP matrix file.
+    cat("\nCreating tsp problem file\n")
+    subtspmat = createTSPFile(rf0 , filestem)
+    
+    # Call concorde
+    if (method == "concorde"){
+      cat("\nRun concorde\n")
+      callConcorde(execPath, paste0(filestem, ".tsp"))
+      cat("\nProcess concorde output\n")
+      good.order = processConcordeOutput(paste0(filestem, ".sol"))
+    }
+    
+    # Call LKH
+    if (method == "lkh"){
+      callLKH(execPath, paste0(filestem, ".tsp"))
+      cat("\nProcess LKH output\n")
+      good.order = processLKHOutput(paste0(filestem, ".LKH"), nmarker)
+    }
+    
+    
+    # return ordered marker names
+    # return(mn[good.order])
+    # unlink(tmpdir, recursive = T)
+    names(good.order) = mn[good.order]
+    return(good.order)
+  # })
+  
+  # names(neworder) = chr
+  # newcross = reorder.marker(cross, neworder)
+  # Remove the temp files.
+  # unlink(tmpdir, recursive = T)
+  # return(newcross)
+}
+
+
 #' use LKH2 to reorder the markers within a R/qtl object
 #' @usage tspOrde2(cross, method="concorde", execPath, chr=chrnames(cross))
 #' @param cross - a R/qtl cross object
