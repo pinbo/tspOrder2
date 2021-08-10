@@ -1,4 +1,5 @@
 # tspOrder2
+
 Using traveling salesman problem (TSP) software Concorde or LKH2 to fine-order markers in a genetic map
 
 # Introduction
@@ -12,14 +13,24 @@ In addition, I modified the **tspOrder** function (**tspOrder2**) so it can also
 Another problem for high-density maps is that multiple optimal orders can get the shortest maps. I would like the one that is more consistent with the physical maps. Using random seeds, tsp software can give different optimal orders (same length but a little different orders in some regions). So I just run multiple times of **tspOrder** to improve regions that can have multiple orders. Those regions usually include a group of markers with equal recombination frequency to each other, so their order can change.
 Multiple runs of **tspOrder** are not the most resources-efficient way, but it is the easiest way to do. I may improve the code later when I get time.
 
+# Update
+
+- 2021-08-10 add an outcrossing exmaple based on [onemap tutorial](https://statgen-esalq.github.io/tutorials/onemap/Outcrossing_Populations.html). One thing I am not sure is the recombination fraction of some type D markers: one map gives rf=1e-50 and LOD=0, but I think they are unlinked (rf=0.5). Please correct me.
+
 # Usage
-Try the [examples.R](examples.R) file.
+
+## Inbred populations
+Try the [examples.R](examples.R) file for inbred populations.
 
 These R functions can only order markers in a linkage group, so you should already at least break the markers into linkage groups.
 
 If you want to improve your marker order to be more consistent with the physical map, please add physical positions (chromosome names and position in Mb, separated by "_") to your marker names, such as "IWB3087_1A_9.16". Check out the example input file "rqtl-input-example.csv". The physical chromosome names should be the same as your genetic chromosome names, DO NOT use "chr1A" for the physical map, but "1A" for genetic maps.
 
+## Outcrossing populations
+Please try [examples_outcross.R](examples_outcross.R) for full-sib F1 outcrossing populations. I have no experience on outcrossing species and all I learnt is from [onemap's tutorial](https://statgen-esalq.github.io/tutorials/onemap/Outcrossing_Populations.html). Please double check and let me know if find any mistakes.
+
 # Software needed
+
 [Concorde](https://www.math.uwaterloo.ca/tsp/concorde/downloads/downloads.htm) OR [LKH2](http://akira.ruc.dk/~keld/research/LKH/) are needed for these R scripts. Although my scripts use a GPL3 license, [Concorde](https://www.math.uwaterloo.ca/tsp/concorde/downloads/downloads.htm) and [LKH2](http://akira.ruc.dk/~keld/research/LKH/) are for **academic use only**. Please check their websites for details. I downloaded the Linux and Windows version of [Concorde](https://www.math.uwaterloo.ca/tsp/concorde/downloads/downloads.htm) for my own use. The Windows version needs the **cygwin1.dll** (32-bit, no need to install cygwin-32bit) and I have put them together. LKH2 Windows version can be [downloaded](http://akira.ruc.dk/~keld/research/LKH/LKH-2.exe) from its website. I compiled the Linux version for my own use.
 
 # Acknowledgement
