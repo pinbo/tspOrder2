@@ -22,6 +22,9 @@ m1 = read.cross(file = "rqtl-input-example.csv", format = "csvr", crosstype = "r
 
 m2 = dropSimilarMarkers(m1) # drop markers with recombination fraction < 0.1 from each other
 m2 = quickEst(m2) # estimate the genetic distance
+map2 = pull.map(m2, as.table = T) # pull genetic maps of m2
+write.table(map2, "map2.txt",sep="\t")
+
 m3 = tspOrder2(cross = m2, method="concorde", execPath=concorde_path) # reorder markers with tsp software concorde
 # m3 = tspOrder2(cross = m2, method="lkh", execPath=LKHexec) # reorder markers with tsp software LKH2
 m3 = quickEst(m3)          # estimate the genetic distance
@@ -30,11 +33,11 @@ m3 = matchOrientation(m3, m2) # make all chromosomes of m3 have the same orienta
 map3 = pull.map(m3, as.table = T) # pull genetic maps of m3
 write.table(map3, "map3.txt",sep="\t") # write for you to compare with your current map
 
-# Step 4: make marker orders are more consistent with the physical map (optinal)
+# Step 4: make marker orders are more consistent with the physical map (optimal)
 ### run multiple tspOrder2 to get the best order that is consistent
 ### with the physical map but without affecting the genetic map length
 newmap = map3
-
+runmaps = list()
 # You can run multiple times of the loop or change the loop number (default 10)
 # each run will improve the order in newmap
 for (n in 1:10){
@@ -51,6 +54,7 @@ for (n in 1:10){
 markerlist = split(rownames(newmap), newmap$chr)
 m4 = reorder.marker(m3, markerlist) # replace the maps of m3 with the new marker list
 plotMap(m3, m4)
+plotMap(m2, m4)
 chrlen(m3)-chrlen(m4)
 
 map4 = pull.map(m4, as.table = T) # final adjusted maps
